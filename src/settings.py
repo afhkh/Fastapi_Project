@@ -15,5 +15,12 @@ class APPConfigSettings(BaseSettings):
     CORS_ALLOW_METHODS:List=["*"]
     CORS_ALLOW_HEADERS:List=["*"]
 
+    #数据库相关
+    DB_HOST:str
+    DB_PORT:int
+    DB_USER:str
+    DB_PASSWORD:str
+    DB_DATABASE:str='kong_oa'
+
 
 setting=APPConfigSettings()
