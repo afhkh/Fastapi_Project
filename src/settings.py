@@ -22,5 +22,10 @@ class APPConfigSettings(BaseSettings):
     DB_PASSWORD:str
     DB_DATABASE:str='kong_oa'
 
+    #jwt相关
+    ACCESS_TOKEN_EXPIRE_MINUTES:int=30   #过期时间
+    SECRET_KEY:str='dagakhgayuabgvmz(()9)'  #密钥
+    ALGORITHM:str='HS256'   #加密方式
+
 
 setting=APPConfigSettings()

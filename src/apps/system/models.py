@@ -2,11 +2,11 @@
 from tortoise import Model,fields
 
 from passlib.context import CryptContext
-pwd_context=CryptContext(schemes=['bcrypt'],deprecated='auto')
+pwd_context=CryptContext(schemes=['bcrypt_sha256'],deprecated='auto')
 #1.用户表
 class UserInfo(Model):
     username=fields.CharField(max_length=150,unique=True,description='用户名')
-    password=fields.CharField(max_length=128,description='用户密码')
+    password=fields.CharField(max_length=255,description='用户密码')
     #用户输入错误3次密码后，锁定用户--》锁7天--》自动解锁--》超级管理员手动解锁
     is_active=fields.BooleanField(default=True,description='是否是活跃用户')
     email=fields.CharField(max_length=32,description='邮箱',null=True)
@@ -58,3 +58,6 @@ class OnlineUser(Model):
 
     class Meta:
         table='oa_online_user'
+
+if __name__ =='__main__':
+    print(UserInfo.make_password('1234'))
