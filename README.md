@@ -1,113 +1,178 @@
-# Fastapi_Project
-# 后端：
-#    FastApi，jwt，cors，mysql，websocket
-# 前端：
-#   Vue3，pinia，vue-router，js，vue-cookies，axios，elemenui-plus[ant-design]
+# Kong-OA-Backend
 
+Kong-OA 办公自动化（OA）系统的后端项目，基于 **FastAPI** 构建，提供用户登录认证（JWT）、权限控制（RBAC）、服务器性能监控等接口，配合前端 `Kong_OA_FRONT`（Vue3 + Element Plus）使用。
 
-#后端目录结构
-    Kong-OA-Backend
-        -logs:                          #存放日志
-            -                           #访问日志
-            -                           # 错误日志
-        -migrations:                    #迁移记录，自动生成的
-        -src:                           #核心代码
-            -apps                       #放一个个的app
-                -home                   #首页app
-                    -__init__.py        #首页相关的APIRouter
-                    -views              #放首页的视图函数
-                        -views.py       #真正写视图函数的地址
-                    -models.py          # 首页功能会用到的表
-                    -schemas.py         #pydantic表模型，序列化反序列化和校验
-                -system                 #系统功能，RBAC核心
-                    -__init__.py        #权限相关的APIRouter
-                    -views              # 放RBAC的视图函数
-                        -user.py        #写用户相关视图函数
-                        -auth.py        #写权限相关的视图函数
-                    -models.py          # 放RBAC会用到的表
-                    -schemas.py         #pydantic表模型，序列化反序列化和校验
-                -__init__.py            #总的APIRouter
-            -libs文件夹                 #后期集成第三方，封装写在这里面
-                -阿里大于短信
-                -阿里oss
-                -七牛云存储
-                -MinIo存储
-            -utils                      #项目公共功能
-                -common_logger          #对logger封装
-                -common_middlware       #中间件封装
-                -common_response        #响应对象封装
-                -common_exception       #全局异常封装
-                -comoon_db              #数据库封装
-            -__init__.py                #创建FastAPI的app对象和注册路由，中间件，全局异常..
-            -settings.py                #项目配置文件，数据库链接地址，跨域配置
-        -main.py                        #整个程序的入口
+## 技术栈
 
+| 分类 | 技术 |
+| --- | --- |
+| Web 框架 | FastAPI |
+| ORM | Tortoise ORM |
+| 数据库 | MySQL / MariaDB |
+| 数据库迁移 | Aerich |
+| 认证 | JWT（python-jose） |
+| 密码加密 | Passlib（bcrypt_sha256） |
+| 日志 | Loguru |
+| 配置管理 | pydantic-settings + python-dotenv |
+| 系统监控 | psutil |
+| ASGI 服务器 | Uvicorn |
 
-引入日志
-#1. loguru 是python界非常出名贼简单的一个日志库，很方便的记录日志
-#2.引入到我们的项目中
-    -用户只要访问我们的接口，我们就记录日志：info日志--》开发阶段
-        -日志+中间件
-    -用户操作系统处理异常，我们就记录日志：error日志--》上线
-        -全局异常处理
-#3.安装 配置
-    -pip install loguru
+## 功能模块
 
-中间件
-#1.目前先写两个中间件
-    -处理cors跨域
-    -记录访问日志，统计访问时间，返回到响应头中
-        -用户只要访问，记录日志
+- **认证与鉴权**：用户登录，签发 JWT token；对外提供认证接口。
+- **系统管理（RBAC）**：用户相关接口、权限相关接口，为 RBAC 权限模型预留结构。
+- **首页 / 监控**：提供服务器性能信息接口（操作系统、CPU、磁盘、内存、网卡流量）。
+- **日志与异常**：基于中间件记录访问日志，全局异常统一处理。
 
-前端样式库
-    -element团队的:elementui  目前Vue3用的话是element-plus 
-        -网址：https://element-plus.org/zh-CN/
-    
-    -蚂蚁团队的：ant-desgin ：区分Vue版本
-        -网址https://www.antdv.com/docs/vue/introduce-cn
+## 目录结构
 
-    -移动端的：vant vue
-        -网址https://vant-ui.github.io/vant/#/zh-CN
+```
+Kong-OA-Backend/
+├── logs/                         # 日志文件（info / error，按天切割）
+├── migrations/                   # 数据库迁移记录（aerich 自动生成）
+├── script/                       # 脚本文件
+├── src/                          # 核心代码
+│   ├── apps/                     # 各个业务 app
+│   │   ├── home/                 # 首页 app
+│   │   │   ├── __init__.py       # 首页相关 APIRouter
+│   │   │   ├── models.py         # 首页用到的表
+│   │   │   ├── schemas.py        # pydantic 模型（序列化 / 校验）
+│   │   │   └── views/
+│   │   │       └── views.py      # 首页视图函数
+│   │   └── system/               # 系统功能（RBAC 核心）
+│   │       ├── __init__.py       # 权限相关 APIRouter
+│   │       ├── models.py         # RBAC 相关表
+│   │       ├── schemas.py        # pydantic 模型
+│   │       └── views/
+│   │           ├── user.py       # 用户相关视图函数
+│   │           └── auth.py       # 权限相关视图函数
+│   ├── libs/                     # 第三方集成封装（短信、OSS、MinIO 等）
+│   ├── utils/                    # 项目公共功能
+│   │   ├── common_logger.py      # logger 封装
+│   │   ├── common_middleware.py  # 中间件封装（CORS、访问日志）
+│   │   ├── common_response.py    # 统一响应对象封装
+│   │   ├── common_exception.py   # 全局异常封装
+│   │   └── common_db.py          # 数据库封装
+│   ├── __init__.py               # 创建 FastAPI app，注册路由 / 中间件 / 异常 / ORM
+│   └── settings.py               # 项目配置（数据库、跨域、JWT 等）
+├── main.py                       # 程序入口
+├── pyproject.toml                # aerich 配置
+└── learn.md                      # 开发学习笔记
+```
 
+## 快速开始
 
-jwt：json web token 是一种前后端登录认证的方式
-    -cookie  保存再客户端浏览器上的键值对
-        -用户登录了--》记录用户登录--》向客户端浏览器中写入用户名
-        -以后用户访问我们需要登录后才能访问的接口（地址）--》携带当前给的用户名
-        -泄露，被篡改--》把张三改成李四--》购物
+### 环境要求
 
-    -session：：保存再服务端的键值对
-        -用户登录了--》记录用户登录--》向客户端浏览器中写入  随机字符串
-            {张三：123w46w462，李四：967afsggss，王五：sahfkjasg64}
-        -以后用户访问我们需要登录后才能访问的接口（地址）--》携带随机字符串
-            -后端，根据随机字符串拿到是谁（django-session：关系型数据：性能：redis）
-        
-        -不好处：如果登录用户量大，服务端要存储大量的数据，造成压力
-    
-    -token：不在服务端存储，但是能保证安全的登录认证机制
-        -原理：三段式，每段使用base64编码
-            asdfasf.asdfasdf.asdfasdfasd
-              头      荷载        签名
-        -用户登录了--》记录用户登录--》生成一个三段式的token--》返回给客户端
-             头一般固定：荷载（用户信息：用户名，token过期时间token签发时间）：签名
-             头+荷载通过某个加密方式得到（md5）--》签名
-        
-        -以后用户访问我们需要登录后才能访问的接口（地址）--》携带token
-            -拿出token的头和荷载，再使用之前的加密方式（md5），得到新签名
-                -如果这个token没有被改过，这俩签名是一样的--》既然一样--》信赖荷载中用户的信息：用户名
-                -如果token被改了，两个签名就不一样了--》不能让用户继续往后走了
-                -伪造？  我们不知道签名生成的方案，密钥
-    
-    -jwt： json web token
-        -针对于web方向的token的认证机制
+- Python 3.10+
+- MySQL / MariaDB
 
+### 安装依赖
 
-登录  相关表
-    -不需要注册--》超级管理员创建的--》我们只能改密码，该信息
-    -公司内部项目
-    -互联网项目肯定注册：100%要注册
+建议使用虚拟环境（项目已含 `.venv`）：
 
-用户表，在线用户表
+```bash
+pip install fastapi uvicorn tortoise-orm aerich pydantic-settings python-dotenv
+pip install python-jose[cryptography] passlib[bcrypt] loguru psutil aiomysql
+```
 
-        
+### 配置环境变量
 
+在项目根目录创建 `.env` 文件，配置以下项（`src/settings.py` 中的 `APPConfigSettings` 会读取）：
+
+```env
+APP_HOST=127.0.0.1
+APP_PORT=8080
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_DATABASE=kong_oa
+```
+
+### 数据库迁移（aerich）
+
+```bash
+aerich init -t src.utils.common_db.DB_ORM_CONFIG
+aerich init-db
+aerich migrate
+aerich upgrade
+```
+
+### 启动服务
+
+```bash
+python main.py
+```
+
+服务默认运行在 `http://127.0.0.1:8080`。
+
+## 接口约定
+
+### 响应格式
+
+所有接口通过 `common_response.APIResponse` 统一返回：
+
+```json
+{
+  "code": 100,
+  "msg": "成功",
+  "data": {}
+}
+```
+
+`code == 100` 表示业务成功，前端据此判断（见前端 `src/http/index.js` 的响应拦截器）。
+
+### 路由前缀
+
+- 首页接口：`/api/v1/home`
+- 系统接口：`/api/v1/system`
+
+### 接口一览
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| POST | `/api/v1/system/user/login` | 用户登录，返回 username / avatar / token |
+| GET | `/api/v1/home/main/info` | 获取服务器性能信息（OS / CPU / 磁盘 / 内存 / 网卡） |
+| GET | `/api/v1/home/main/logger_demo` | 日志使用示例 |
+
+### 登录示例
+
+请求：
+
+```http
+POST /api/v1/system/user/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "1234"
+}
+```
+
+响应：
+
+```json
+{
+  "code": 100,
+  "msg": "成功",
+  "username": "admin",
+  "avatar": "avatar/default.png",
+  "token": "<jwt-token>"
+}
+```
+
+## 关键实现说明
+
+- **统一响应**（`common_response.py`）：基于 `JSONResponse` 封装，默认 `code=100`、`msg=成功`。
+- **全局异常**（`common_exception.py`）：自定义 `AuthException`（1001）、`LoginException`（1002），并兜底处理 `Exception`（9999），返回统一 JSON。
+- **中间件**（`common_middleware.py`）：配置 CORS，并记录每次访问的客户端 IP、请求方式、路径、请求头、响应时间，写入响应头 `X-Process-Time`。
+- **日志**（`common_logger.py`）：Loguru 按级别分离文件，info 日志每天 00:00 切割、保留 3 天；error 日志 500MB 切割、保留 4 周。
+- **密码**（`system/models.py`）：使用 passlib 的 `bcrypt_sha256`，`make_password` 生成密文，`check_password` 校验。
+- **JWT**（`system/views/user.py`）：登录成功后用 `python-jose` 以 `HS256` 签发 token，过期时间由 `ACCESS_TOKEN_EXPIRE_MINUTES` 控制。
+
+## 相关文档
+
+- 开发过程中的学习笔记见 [learn.md](./learn.md)
+- 配套前端项目：`Kong_OA_FRONT`
