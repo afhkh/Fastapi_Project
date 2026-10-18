@@ -59,5 +59,83 @@ class OnlineUser(Model):
     class Meta:
         table='oa_online_user'
 
-if __name__ =='__main__':
-    print(UserInfo.make_password('1234'))
+# 菜单表：Menu    部门表：Dept   角色表：Roles  岗位表：Job
+
+class Menu(Model): # 权限
+    """
+    上级菜单id, 子菜单数目， 菜单类型， 菜单标题， 组件名称， 组件， 排序， 图标， 连接地址， 是否外链， 缓存， 隐藏
+    权限
+    """
+    pid = fields.ForeignKeyField('models.Menu', description='父菜单id', on_delete=fields.SET_NULL, null=True)
+    sub_count = fields.IntField(description='子菜单数目', null=True, blank=True)
+    # 0 菜单，1 子菜单，2 按钮
+    type = fields.IntField(description='菜单类型',  null=True)
+    title = fields.CharField(max_length=32, description='菜单标题',  null=True, unique=True)
+    name = fields.CharField(max_length=255, description='前端组件名称',  null=True, unique=True)
+    component = fields.CharField(max_length=255, description='前端组件',  null=True)
+    menu_sort = fields.IntField(description='菜单排序',  null=True)
+    icon = fields.CharField(max_length=255,  null=True, description='菜单图标')
+    path = fields.CharField(max_length=255,  null=True, description='菜单链接地址')
+    i_frame = fields.BooleanField(default=False, description='是否外链')
+    cache = fields.BooleanField(default=False, description='缓存')
+    hidden = fields.BooleanField(default=False, description='是否隐藏')
+    permission = fields.CharField(max_length=255, description='权限',  null=True)
+    is_menu = fields.BooleanField(default=False, description='是否是菜单')
+
+    class Meta:
+        table = 'oa_menu'
+
+
+    def __str__(self):
+        return self.title
+
+class Dept(Model):
+    """
+    id, 父部门id, 子部门数目, name,
+    """
+    pid = fields.ForeignKeyField('models.Dept', description='父部门id', null=True,  on_delete=fields.SET_NULL)
+    sub_count = fields.IntField(null=True, description='子部门数量')
+    name = fields.CharField(max_length=64, description='部门名', unique=True)
+    enabled = fields.BooleanField(default=True, description='状态')
+    dept_sort = fields.IntField(description='排序',  null=True)
+
+    class Meta:
+        table = 'oa_dept'
+
+    def __str__(self):
+        return self.name
+
+
+class Roles(Model):
+    """
+    name, 级别， 描述， 数据权限，
+    """
+    name = fields.CharField(max_length=32, description='角色名',  null=True, unique=True)
+    level = fields.IntField(description='角色级别',  null=True)
+    description = fields.CharField(max_length=255, description='描述信息',  null=True)
+    data_scope = fields.CharField(max_length=32, description='权限描述,唯一编码',  null=True)
+    status = fields.BooleanField(default=True, description='是否启用?状态：1启用、0禁用')
+    # 关联关系：table 指定中间表的名字
+    depts = fields.ManyToManyField('models.Dept', through='oa_roles_depts', description='角色和部门的关联表')
+    menus = fields.ManyToManyField('models.Menu', through='oa_roles_menus', description='角色和菜单的关联表')
+
+    class Meta:
+        table = 'ao_role'
+
+    def __str__(self):
+        return self.name
+
+
+class Job(Model):
+    """
+    岗位名称， 岗位状态， 排序，
+    """
+    name = fields.CharField(max_length=32, description='岗位名称',  null=True)
+    enabled = fields.BooleanField(description='岗位状态', default=False)
+    job_sort = fields.IntField(description='排序',  unique=True)
+
+    class Meta:
+        table = 'oa_job'
+
+    def __str__(self):
+        return self.name

@@ -4,9 +4,10 @@ router=APIRouter()
 from src.utils.common_response import APIResponse
 from fastapi import Depends
 from ..models import UserInfo
+from .core import get_current_user
 #不同用户登录后，显示的侧边栏是不一样的，按钮权限
 @router.get('/menus')  #需要登录后才能访问---》需要依赖注入
-async def menus(user:UserInfo=Depends(函数)):
+async def menus(user:UserInfo=Depends(get_current_user)):
     print(user)#就是当前登录用户，到时候，咱们通过当前登录用户，去拿到这个用户的权限
     
     #这里能拿到的是哪个用户---》去数据库查出该用户的菜单权限

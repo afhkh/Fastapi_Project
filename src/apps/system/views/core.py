@@ -1,7 +1,10 @@
 from ..models import UserInfo
 from datetime import timedelta,datetime,timezone
 from src.settings import setting
+from fastapi.requests import Request
 from jose import jwt
+from src.utils.common_exception import AuthException
+from fastapi import Depends
 
 #根据用户签发token的函数
 def create_access_token(data:dict,expires_delta:timedelta=None):
@@ -32,6 +35,27 @@ async def authenticate_user(username:str,password:str):
 #3.认证，依赖注入--》所有需要登陆才能访问的接口，必须先执行这个--》drf--》认证类
 from fastapi.security import OAuth2PasswordBearer #要求前端请求头中带：Authorization：Bearer token三段式
 oauth2=OAuth2PasswordBearer(tokenUrl='token')
-async def 
+async def oauth2_scheme(request:Request):
+    try:
+        token=await oauth2(request)
+        return token
+    except Exception as e:
+        raise AuthException(msg='您必须携带token')
+
+#4.获取当前登录用户---》使用用户携带的token来拿到
+async def get_current_user(token:str=Depends(oauth2_scheme)):
+    e=AuthException(msg='token验证失败')
+    try:
+        payload=jwt.decode(token,setting.SECRET_KEY,algorithms=[setting.ALGORITHM])
+        username:str=payload.get('username')
+        if username is None:
+            raise e #从荷载中拿不出用户名，说明验证失败
+        #根据用户名拿到当前登录用户
+        user=await UserInfo.get_or_none(username=username)
+    except Exception:
+        raise e
+
+    return user 
+    
 
 
