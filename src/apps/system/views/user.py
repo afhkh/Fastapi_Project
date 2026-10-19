@@ -14,6 +14,7 @@ from ..views.core import create_access_token,authenticate_user
 from fastapi import Depends
 from src.utils.common_response import APIResponse
 from ..query_params import PaginationQueryParams,UserQueryParams
+from src.utils.common_response import PaginationResponse
 #登录，锁定，解锁，修改个人信息.....
 
 ###1.用户登录####
@@ -46,5 +47,5 @@ async def get_user_list(
     UserSchema.model_validate(item).model_dump()    #model_validate(item)：按照 UserSchema 读取并校验对象属性。model_dump()：把校验后的数据转成字典。
     for item in users                               #for item in users：逐个取出用户对象。
     ]
-    #返给前端(分页)
-    return 
+    #返给前端(分页的响应对象)
+    return PaginationResponse(data=user_dicts,page=page_query.page,page_size=page_query.page_size)

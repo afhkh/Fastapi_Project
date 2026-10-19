@@ -1,10 +1,11 @@
 ###  pip install passlib[bcrypt]  专门生成密文密码的
 from tortoise import Model,fields
+from src.utils.common_model import BaseModel
 
 from passlib.context import CryptContext
 pwd_context=CryptContext(schemes=['bcrypt_sha256'],deprecated='auto')
 #1.用户表
-class UserInfo(Model):
+class UserInfo(BaseModel):
     username=fields.CharField(max_length=150,unique=True,description='用户名')
     password=fields.CharField(max_length=255,description='用户密码')
     #用户输入错误3次密码后，锁定用户--》锁7天--》自动解锁--》超级管理员手动解锁
@@ -21,6 +22,10 @@ class UserInfo(Model):
     enabled=fields.BooleanField(default=True,description='是否启用？状态：1启用，0禁用')
     is_superuser=fields.BooleanField(default=False,description='是否是超级用户')
 
+    #用户跟角色，多对多
+    roles=fields.ManyToManyField('models.Roles',description='用户和角色的关联表',through='oa_users_roles')
+    #用户跟部门：一对多，一个部门有多个员工，而一个员工只属于某一个部门
+    #用户跟岗位：
 
     class Meta:
         table='oa_users'   #表名
@@ -49,7 +54,7 @@ class UserInfo(Model):
 
 
 #2.在线用户表
-class OnlineUser(Model):
+class OnlineUser(BaseModel):
     brower=fields.CharField(max_length=128,description='浏览器',null=True)
     ip=fields.CharField(max_length=64,description='用户登录ip',null=True)
     key=fields.CharField(max_length=255,description='存用户token',null=True)
@@ -61,7 +66,7 @@ class OnlineUser(Model):
 
 # 菜单表：Menu    部门表：Dept   角色表：Roles  岗位表：Job
 
-class Menu(Model): # 权限
+class Menu(BaseModel): # 权限
     """
     上级菜单id, 子菜单数目， 菜单类型， 菜单标题， 组件名称， 组件， 排序， 图标， 连接地址， 是否外链， 缓存， 隐藏
     权限
@@ -89,7 +94,7 @@ class Menu(Model): # 权限
     def __str__(self):
         return self.title
 
-class Dept(Model):
+class Dept(BaseModel):
     """
     id, 父部门id, 子部门数目, name,
     """
@@ -106,7 +111,7 @@ class Dept(Model):
         return self.name
 
 
-class Roles(Model):
+class Roles(BaseModel):
     """
     name, 级别， 描述， 数据权限，
     """
@@ -126,7 +131,7 @@ class Roles(Model):
         return self.name
 
 
-class Job(Model):
+class Job(BaseModel):
     """
     岗位名称， 岗位状态， 排序，
     """
