@@ -1,3 +1,4 @@
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
 from src.apps.home import home_router
 from src.apps.system import system_router
@@ -26,6 +27,9 @@ def create_app()-> FastAPI:
     #4.注册orm
     register_mysql(app)
 
+
     #5.注册全局异常
     register_exception(app)
+    #6.开启media访问-->以后media目录下的所有东西，从浏览器可以直接访问到，以后这文件夹不能放重要东西
+    app.mount('/media',StaticFiles(directory='media'))
     return app

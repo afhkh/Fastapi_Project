@@ -8,8 +8,5 @@
 #pip install aerich
 #pip install tomlkit
 from tortoise import Model,fields
-class Demo(Model):
-    id=fields.IntField(primary_key=True)
-    username=fields.CharField(max_length=150,unique=True,description='用户名')
-    password=fields.CharField(max_length=128,description='用户密码')
+
     

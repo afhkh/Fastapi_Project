@@ -1,3 +1,11 @@
+#迁移库
+#  aerich init -t src.utils.common_db.DB_ORM_CONFIG
+#  aerich init-db
+#  aerich migrate
+#  aerich upgrade
+
+
+
 ###  pip install passlib[bcrypt]  专门生成密文密码的
 from tortoise import Model,fields
 from src.utils.common_model import BaseModel
@@ -25,7 +33,9 @@ class UserInfo(BaseModel):
     #用户跟角色，多对多
     roles=fields.ManyToManyField('models.Roles',description='用户和角色的关联表',through='oa_users_roles')
     #用户跟部门：一对多，一个部门有多个员工，而一个员工只属于某一个部门
-    #用户跟岗位：
+    dept=fields.ForeignKeyField('models.Dept',on_delete=fields.SET_NULL,description='部门名字',null=True)
+    #用户跟岗位：多对多
+    job=fields.ManyToManyField('models.Job',description='用户和岗位的关联表',through='oa_users_jobs')
 
     class Meta:
         table='oa_users'   #表名
