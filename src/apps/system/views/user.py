@@ -41,7 +41,7 @@ async def get_user_list(
     user:UserInfo=Depends(get_current_user)
 ):
     search=user_query.to_query_params()   #返回的那个字典 {nick_name__icontains:刘}
-    users=await UserInfo.filter(**search).filter(is_delete=False).all()   #**search就是把他打散  nick_name__contains='刘'  #这里查的是所有符合的数据，就是UserInfo里面一堆数据对象，故users是一个列表
+    users=await UserInfo.filter(**search).filter(is_delete=False).all().prefetch_related('roles')  #**search就是把他打散  nick_name__contains='刘'  #这里查的是所有符合的数据，就是UserInfo里面一堆数据对象，故users是一个列表
     #序列化 Pydantic
     user_dicts = [
     UserSchema.model_validate(item).model_dump()    #model_validate(item)：按照 UserSchema 读取并校验对象属性。model_dump()：把校验后的数据转成字典。

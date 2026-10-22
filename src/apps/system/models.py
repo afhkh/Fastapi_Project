@@ -25,7 +25,7 @@ class UserInfo(BaseModel):
     nick_name=fields.CharField(max_length=32,description='用户昵称',null=True,unique=True) #null=True表示可以为空
     gender=fields.CharField(max_length=16,description='性别',null=True)
     phone=fields.CharField(max_length=11,description='电话号码',null=True,unique=True)
-    avatar=fields.CharField(max_length=64,default='avatar/default.png',description='头像')
+    avatar=fields.CharField(max_length=64,default='avatar/初华大人.jpg',description='头像')
     #用户刚创建（超级管理员），是禁用状态，用户修改密码后，才是启用状态，没启用，登录不进去
     enabled=fields.BooleanField(default=True,description='是否启用？状态：1启用，0禁用')
     is_superuser=fields.BooleanField(default=False,description='是否是超级用户')
