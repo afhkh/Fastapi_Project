@@ -33,3 +33,14 @@ class UserSchema(BaseModel):
         data.avatar=f'http://{setting.APP_HOST}:{setting.APP_PORT}/media/{data.avatar}'    #再某个字段前后加固定的前缀
         return data
 
+#部门相关序列化
+class DeptSchema(BaseModel):
+    id:int
+    name:str
+    enabled:bool
+    dept_sort:int
+    #后期还要动--》有子关系--》递归序列化
+    #使用pydantic把对象转成字典，要带它
+    class Config:
+        from_attributes=True
+

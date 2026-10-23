@@ -41,11 +41,11 @@ async def get_user_list(
     user:UserInfo=Depends(get_current_user)
 ):
     search=user_query.to_query_params()   #返回的那个字典 {nick_name__icontains:刘}
-    users=await UserInfo.filter(**search).filter(is_delete=False).all().prefetch_related('roles')  #**search就是把他打散  nick_name__contains='刘'  #这里查的是所有符合的数据，就是UserInfo里面一堆数据对象，故users是一个列表
+    user=await UserInfo.filter(**search).filter(is_delete=False).all().prefetch_related('roles')  #**search就是把他打散  nick_name__contains='刘'  #这里查的是所有符合的数据，就是UserInfo里面一堆数据对象，故users是一个列表
     #序列化 Pydantic
     user_dicts = [
     UserSchema.model_validate(item).model_dump()    #model_validate(item)：按照 UserSchema 读取并校验对象属性。model_dump()：把校验后的数据转成字典。
-    for item in users                               #for item in users：逐个取出用户对象。
+    for item in user                               #for item in users：逐个取出用户对象。
     ]
     #返给前端(分页的响应对象)
     return PaginationResponse(data=user_dicts,page=page_query.page,page_size=page_query.page_size)
@@ -69,8 +69,8 @@ async def get_user_info(
 ##3.删除用户：单删和多删------请求体中数据格式
 @router.delete('/users',description='删除用户接口，单条多条都支持')
 async def delete_user(
-    ids:List[int]
-    # user:UserInfo=Depends(get_current_user)
+    ids:List[int],
+    user:UserInfo=Depends(get_current_user)
 ):
     # res=await UserInfo.filter(id__in=ids).delete() #硬删除，数据库也删除
     res=await UserInfo.filter(id__in=ids).update(is_delete=True) #软删除，字段控制

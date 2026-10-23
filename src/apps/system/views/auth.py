@@ -36,30 +36,30 @@ async def menus(user:UserInfo=Depends(get_current_user)):
                     'component': 'admin/User',
                     'children': []
                 },
-                # {
-                #     'name': 'SysRole',
-                #     'title': '角色管理',
-                #     'icon': 'Sell',
-                #     'path': '/admin/role',
-                #     'component': 'admin/Role',
-                #     'children': []
-                # },
-                # {
-                #     'name': 'SysMenu',
-                #     'title': '菜单管理',
-                #     'icon': 'Sell',
-                #     'path': '/admin/menu',
-                #     'component': 'admin/Menu',
-                #     'children': []
-                # },
-                # {
-                #     'name': 'SysDept',
-                #     'title': '部门管理',
-                #     'icon': 'Sell',
-                #     'path': '/admin/dept',
-                #     'component': 'admin/Dept',
-                #     'children': []
-                # },
+                {
+                    'name': 'SysRole',
+                    'title': '角色管理',
+                    'icon': 'Sell',
+                    'path': '/admin/role',
+                    'component': 'admin/Role',
+                    'children': []
+                },
+                {
+                    'name': 'SysMenu',
+                    'title': '菜单管理',
+                    'icon': 'Sell',
+                    'path': '/admin/menu',
+                    'component': 'admin/Menu',
+                    'children': []
+                },
+                {
+                    'name': 'SysDept',
+                    'title': '部门管理',
+                    'icon': 'Sell',
+                    'path': '/admin/dept',
+                    'component': 'admin/Dept',
+                    'children': []
+                },
                 {
                     'name': 'SysJob',
                     'title': '岗位管理',

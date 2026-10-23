@@ -167,3 +167,10 @@ jwt：json web token，是一种前后端登录认证的方式。
   #3 修改用户
   #4 增加用户（不是用户注册--》超级管理员录入的）
       -批量增加--》上产一个excel--》按照固定格式--》批量增加用户
+
+### 部门相关接口
+  # 查询所有部门--get--》/system/dept/depts
+  # 查询单个部门--get--》/system/dept/depts/2
+  # 新增一个部门--post--》/system/dept/depts
+  # 删除部门(单-多)--delete--》/system/dept/depts
+  # 修改一个部门--put--》/system/dept/depts/1
