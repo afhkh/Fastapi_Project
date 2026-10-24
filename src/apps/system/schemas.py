@@ -34,7 +34,8 @@ class UserSchema(BaseModel):
         return data
 
 #部门相关序列化
-class DeptSchema(BaseModel):
+#序列化的类--》给前端的
+class DeptOutSchema(BaseModel):
     id:int
     name:str
     enabled:bool
@@ -44,3 +45,58 @@ class DeptSchema(BaseModel):
     class Config:
         from_attributes=True
 
+#反序列化的--》前端给我们的
+#序列化的类--》给前端的用的
+class DeptInSchema(BaseModel):
+    pid_id:int | None=None
+    name:str
+    enabled:bool
+    sub_count:int
+    dept_sort:int
+    class Config:
+        from_attributes=True
+
+class JobOutSchema(BaseModel):
+    id:int
+    name:str
+    enabled:bool
+    job_sort:int
+
+    class Config:
+        from_attributes=True
+
+class JobInSchema(BaseModel):
+    id:int
+    name:str
+    enabled:bool
+    job_sort:int
+
+    class Config:
+        from_attributes=True
+
+#角色相关
+class RoleOutSchema(BaseModel):
+    id:int
+    name:str
+    leval:int
+    description:str
+    data_scope:str
+    status:bool
+    #关联关系：db_table指定中间表的名字
+    # depts:list[DeptOutSchema]
+    # menus:list[MenuOutSchema]
+    class Config:
+        from_attributes=True
+
+#角色相关
+class RoleInSchema(BaseModel):
+    name:str
+    leval:int
+    description:str
+    data_scope:str
+    status:bool
+    #关联关系：db_table指定中间表的名字
+    # depts:list[DeptOutSchema]
+    # menus:list[MenuOutSchema]
+    class Config:
+        from_attributes=True
