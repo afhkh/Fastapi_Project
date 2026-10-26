@@ -14,22 +14,14 @@ async def get_dept_list(
     user:UserInfo=Depends(get_current_user)
 ):
     #部门，分父级和子级--》到时候要加过滤条件--》只查出没有父级的部门--》最顶级的部门
-    depts=await Dept.filter(is_delete=False).all()
-    dept_dicts=[DeptOutSchema.model_validate(dept).model_dump() for dept in depts]
+
+    #只查父级部门--》
+    
+    depts=await Dept.filter(is_delete=False,pid=None).all().prefetch_related('children')
+    dept_dicts=[DeptOutSchema.from_orm_recursive(dept) for dept in depts]
     return APIResponse(results=dept_dicts)
 
-# #2.带分页版本的--->不写带分页的--》部门不会很多--》还有子级
-# @router.get('/depts',description='查询所有部门')
-# async def get_dept_list(
-#     page_query:PaginationQueryParams=Depends(),
-#     user:UserInfo=Depends(get_current_user)
-# ):
-#     #部门，分父级和子级--》到时候要加过滤条件--》只查出没有父级的部门--》最顶级的部门
-#     #我们认为：把数据库中的数据都查回来  100w条--》再去做序列化--》再分页   害怕数据量太大给服务器内存撑爆
-#     #实际上，select * from dept limit=20 ;生成器--》用多少，查多少，不会一次性查回来
-#     depts=await Dept.filter().all()
-#     dept_dicts=[DeptOutSchema.model_validate(dept).model_dump() for dept in depts]
-#     return PaginationResponse(data=dept_dicts,page=page_query.page,page_size=page_query.page_size)
+
 
 
 #3.部门新增---{pid_id：1，sub_count：5，name：山东分公司，enabled：true,dept_sort:1}
@@ -68,7 +60,7 @@ async def get_dept(
     # user:UserInfo=Depends(get_current_user)
 ):
     dept=await Dept.filter(id=dept_id).first()
-    dept_dict=DeptOutSchema.model_validate(dept).model_dump()
+    dept_dict=await DeptOutSchema.from_orm_recursive(dept)
     return APIResponse(msg='部门查找成功',result=dept_dict)
 
 

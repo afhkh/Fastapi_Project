@@ -108,7 +108,18 @@ class Dept(BaseModel):
     """
     id, 父部门id, 子部门数目, name,
     """
-    pid = fields.ForeignKeyField('models.Dept', description='父部门id', null=True,  on_delete=fields.SET_NULL)
+    #在这写是pid--》在数据库中是 pid_id
+    #以后我们拿到Dept的对象
+    #dept.pid-->父级对象
+    #dept.pid_id--->父级对象的id号
+    #related_name-->反向和正向查询
+    """
+    反向和正向查询
+    正向:dept.pid ---》这是父 部门对象
+    反向:dept.children.all()--->这是子部门对象
+
+    """
+    pid = fields.ForeignKeyField('models.Dept', description='父部门id', null=True,  on_delete=fields.SET_NULL,related_name='children')
     sub_count = fields.IntField(null=True, description='子部门数量')
     name = fields.CharField(max_length=64, description='部门名', unique=True)
     enabled = fields.BooleanField(default=True, description='状态')
