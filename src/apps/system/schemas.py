@@ -57,7 +57,8 @@ class DeptOutSchema(BaseModel):
             id=obj.id,
             name=obj.name,
             enabled=obj.enabled,
-            dept_sort=obj.dept_sort
+            dept_sort=obj.dept_sort,
+            pid_id=obj.pid_id
         ).model_dump(exclude={'children'})
         #2.查出当年部门所有的子部门对象，把children查出来
         children=await obj.children.filter(is_delete=False).all()
@@ -88,10 +89,9 @@ class JobOutSchema(BaseModel):
         from_attributes=True
 
 class JobInSchema(BaseModel):
-    id:int
     name:str
     enabled:bool
-    job_sort:int
+    job_sort:int|None=None
 
     class Config:
         from_attributes=True

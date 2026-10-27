@@ -18,7 +18,7 @@ async def get_dept_list(
     #只查父级部门--》
     
     depts=await Dept.filter(is_delete=False,pid=None).all().prefetch_related('children')
-    dept_dicts=[DeptOutSchema.from_orm_recursive(dept) for dept in depts]
+    dept_dicts=[await DeptOutSchema.from_orm_recursive(dept) for dept in depts]
     return APIResponse(results=dept_dicts)
 
 
