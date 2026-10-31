@@ -30,7 +30,11 @@ async def authenticate_user(username:str,password:str):
         return False
     if not user.check_password(password):
         return False
-    return user #查到了，密码也对
+    #判断用户是活跃的
+    if user.is_active:
+        return user
+    else:
+        return False
 
 #3.认证，依赖注入--》所有需要登陆才能访问的接口，必须先执行这个--》drf--》认证类
 from fastapi.security import OAuth2PasswordBearer #要求前端请求头中带：Authorization：Bearer token三段式

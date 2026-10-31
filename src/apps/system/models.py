@@ -81,7 +81,7 @@ class Menu(BaseModel): # 权限
     上级菜单id, 子菜单数目， 菜单类型， 菜单标题， 组件名称， 组件， 排序， 图标， 连接地址， 是否外链， 缓存， 隐藏
     权限
     """
-    pid = fields.ForeignKeyField('models.Menu', description='父菜单id', on_delete=fields.SET_NULL, null=True)
+    pid = fields.ForeignKeyField('models.Menu', description='父菜单id', on_delete=fields.SET_NULL, null=True,related_name='children')
     sub_count = fields.IntField(description='子菜单数目', null=True, blank=True)
     # 0 菜单，1 子菜单，2 按钮
     type = fields.IntField(description='菜单类型',  null=True)
@@ -91,11 +91,11 @@ class Menu(BaseModel): # 权限
     menu_sort = fields.IntField(description='菜单排序',  null=True)
     icon = fields.CharField(max_length=255,  null=True, description='菜单图标')
     path = fields.CharField(max_length=255,  null=True, description='菜单链接地址')
-    i_frame = fields.BooleanField(default=False, description='是否外链')
-    cache = fields.BooleanField(default=False, description='缓存')
-    hidden = fields.BooleanField(default=False, description='是否隐藏')
+    i_frame = fields.BooleanField(default=False, description='是否外链',  null=True)
+    cache = fields.BooleanField(default=False, description='缓存',  null=True)
+    hidden = fields.BooleanField(default=False, description='是否隐藏',  null=True)
     permission = fields.CharField(max_length=255, description='权限',  null=True)
-    is_menu = fields.BooleanField(default=False, description='是否是菜单')
+    is_menu = fields.BooleanField(default=False, description='是否是菜单',  null=True)
 
     class Meta:
         table = 'oa_menu'

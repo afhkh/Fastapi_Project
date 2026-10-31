@@ -2,6 +2,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
 from src.apps.home import home_router
 from src.apps.system import system_router
+from src.apps.oa import oa_router
 from src.utils.common_middleware import add_cors_middleware
 
 from src.utils.common_db import register_mysql
@@ -13,6 +14,7 @@ def register_router(app:FastAPI):
     #因此home里面的路由前缀为/api/v1/home
     #在这里将home_router注册到app这个路由中
     app.include_router(system_router,prefix='/api/v1/system',tags=['系统所有路由'])
+    app.include_router(oa_router,prefix='/api/v1/oa',tags=['OA所有路由'])
 
 def register_middle_ware(app:FastAPI):
     add_cors_middleware(app)

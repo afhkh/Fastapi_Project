@@ -22,7 +22,7 @@ DB_ORM_CONFIG={
     'apps': {
         'models': {
             # models:models 找到对应自定义的model.py
-            'models': ['src.apps.home.models', 'src.apps.system.models','aerich.models'],  # aerich.models迁移模型
+            'models': ['src.apps.oa.models', 'src.apps.system.models','aerich.models'],  # aerich.models迁移模型
             'default_connection': 'default',
         }
     },
